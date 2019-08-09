@@ -12,41 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef USKIT_POLICY_BACKEND_REDIS_POLICY_H
-#define USKIT_POLICY_BACKEND_REDIS_POLICY_H
+#ifndef USKIT_POLICY_BACKEND_DYNAMIC_POLICY_H
+#define USKIT_POLICY_BACKEND_DYNAMIC_POLICY_H
 
 #include "policy/backend_policy.h"
+#include "dynamic_config.h"
 
 namespace uskit {
 namespace policy {
 namespace backend {
 
-// Default Redis request policy.
-class RedisRequestPolicy : public BackendRequestPolicy {
+// Dynamic HTTP request policy.
+class DynamicHttpRequestPolicy : public BackendRequestPolicy {
 public:
+    ~DynamicHttpRequestPolicy() {}
     int init(const RequestConfig& config, const Backend* backend);
     int run(BackendController* cntl) const;
-    int run(
-            const BackendEngine* backend_engine,
+    int run(const BackendEngine* backend_engine,
             BackendController* cntl,
             const std::unordered_map<std::string, FlowConfig>* flow_map,
             const RankEngine* rank_engine) const;
+
 private:
     const Backend* _backend;
-    RedisRequestConfig _request_config;
+    DynamicHttpRequestConfig _request_config;
 };
 
-// Default Redis response policy.
-class RedisResponsePolicy : public BackendResponsePolicy {
+// Dynamic HTTP response policy.
+class DynamicHttpResponsePolicy : public BackendResponsePolicy {
 public:
     int init(const ResponseConfig& config, const Backend* backend);
     int run(BackendController* cntl) const;
+
 private:
     BackendResponseConfig _response_config;
 };
 
-} // namespace backend
-} // namespace policy
-} // namespace uskit
+}  // namespace backend
+}  // namespace policy
+}  // namespace uskit
 
-#endif // USKIT_POLICY_BACKEND_REDIS_POLICY_H
+#endif  // USKIT_POLICY_BACKEND_HTTP_POLICY_H

@@ -12,32 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "butil.h"
-#include "policy/rank/default_policy.h"
-#include "rank_engine.h"
+#ifndef USKIT_POLICY_FLOW_RECURRENT_POLICY_H
+#define USKIT_POLICY_FLOW_RECURRENT_POLICY_H
+
+#include "policy/flow_policy.h"
+#include "dynamic_config.h"
 
 namespace uskit {
 namespace policy {
-namespace rank {
+namespace flow {
 
-int DefaultPolicy::init(const RankNodeConfig& config) {
-    if (_rank_config.init(config) != 0) {
-        LOG(ERROR) << "Failed to initialize rank config";
-        return -1;
-    }
-    return 0;
-}
+// Default flow policy.
+class RecurrentPolicy : public FlowPolicy {
+public:
+    int init(const google::protobuf::RepeatedPtrField<FlowNodeConfig> &config);
+    int run(USRequest& request, USResponse& response,
+            const BackendEngine* backend_engine,
+            const RankEngine* rank_engine) const;
+private:
+    std::unordered_map<std::string, FlowConfig> _flow_map;
+    std::string _start_flow;
+};
 
-int DefaultPolicy::run(RankCandidate& rank_candidate, RankResult& rank_result,
-                       expression::ExpressionContext& context) const {
-    if (_rank_config.run(rank_candidate, rank_result, context) != 0) {
-        US_LOG(ERROR) << "Failed to evaluate rank config";
-        return -1;
-    }
-
-    return 0;
-}
-
-} // namespace rank
+} // namespace flow
 } // namespace policy
 } // namespace uskit
+
+#endif // USKIT_POLICY_FLOW_RECURRENT_POLICY_H
